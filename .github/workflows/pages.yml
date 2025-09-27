@@ -2,8 +2,8 @@ name: Pages
 
 on:
   push:
-    branches: ["main"]     # đổi nếu nhánh mặc định của repo là 'master'
-  workflow_dispatch: {}
+    branches: ["main"]   # nếu nhánh chính của thầy là 'master' thì đổi thành "master"
+  workflow_dispatch: {}  # cho phép chạy thủ công từ tab Actions
 
 permissions:
   contents: read
@@ -19,15 +19,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      # Dùng Node để tạo manifest.json từ thư mục tools/
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      # 1) Build manifest.json từ thư mục tools/
       - run: node scripts/build-manifest.mjs
-      # 2) Đóng gói artifact để Pages deploy
+
+      # Đóng gói toàn bộ repo làm artifact để deploy
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: .                 # deploy toàn bộ root (có manifest.json)
+          path: .
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -37,4 +40,3 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
-.github/workflows/pages.yml
