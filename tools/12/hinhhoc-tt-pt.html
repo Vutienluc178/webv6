@@ -1,0 +1,24 @@
+<!DOCTYPE html><html lang="vi"><head>
+<meta charset="utf-8"/>
+<title>Lớp 12 — Hình học — Khoảng cách điểm-đường thẳng</title>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="tool-category" content="lop">
+<meta name="tool-grade" content="12">
+<meta name="tool-track" content="hinh-hoc">
+<meta name="tool-tags" content="hinh-hoc, toa-do, khoang-cach, lop-12">
+</head><body>
+<h1>Khoảng cách từ điểm đến đường thẳng</h1>
+<p>Đường thẳng d: Ax + By + C = 0</p>
+<label>A <input id="A" type="number" value="1"></label>
+<label>B <input id="B" type="number" value="1"></label>
+<label>C <input id="C" type="number" value="-1"></label>
+<p>Điểm P(x0, y0)</p>
+<label>x0 <input id="x0" type="number" value="0"></label>
+<label>y0 <input id="y0" type="number" value="0"></label>
+<button onclick="calc()">Tính</button>
+<pre id="out"></pre>
+<script>
+function calc(){const A=+document.getElementById('A').value,B=+document.getElementById('B').value,C=+document.getElementById('C').value,x0=+x0El.value,y0=+y0El.value;const d=Math.abs(A*x0+B*y0+C)/Math.hypot(A,B);out.textContent=`d(P,d)=${d.toFixed(4)}`;}
+const x0El=x0,y0El=y0,out=document.getElementById('out');
+</script>
+</body></html>

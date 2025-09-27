@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Math Tools Hub — Ultra+</title>
+  <meta name="description" content="Bộ công cụ Toán THPT: GVCN, Lớp (Đại số/Hình học) và Khác. Tìm nhanh, chia sẻ, PWA offline.">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="assets/site.webmanifest">
+  <link rel="stylesheet" href="assets/styles.css" />
+  <meta name="theme-color" content="#2563eb"/>
+</head>
+<body>
+  <header class="shell">
+    <nav class="topbar">
+      <a class="brand" href="./" aria-label="Trang chủ">
+        <img src="assets/logo.svg" alt="" width="28" height="28"/>
+        <span>Math Tools Hub</span>
+      </a>
+      <div class="top-actions">
+        <button id="menuToggle" class="btn ghost" title="Ẩn/hiện các bộ lọc">☰ Menu</button>
+        <button id="installBtn" class="btn ghost" title="Cài ứng dụng (PWA)">⬇️ Cài</button>
+        <button id="themeToggle" class="btn ghost" title="Đổi giao diện (Sáng/Tối)">🌓</button>
+        <button id="openPalette" class="btn" title="Mở Command Palette (⌘K/Ctrl+K)">⌘K</button>
+        <a class="btn primary" href="https://github.com/" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </nav>
+
+    <div class="hero">
+      <div class="author">Tác giả — <strong>Thầy Vũ Tiến Lực</strong> — Trường <strong>THPT Nguyễn Hữu Cảnh</strong></div>
+      <h1>🧮 Công cụ Toán học THPT</h1>
+      <p>Danh mục: <strong>GVCN</strong>, <strong>Lớp</strong> (10–11–12, <em>Đại số/Hình học</em>), <strong>Khác</strong>.</p>
+      <div class="hints"><span>Phím tắt: <kbd>/</kbd> tìm kiếm • <kbd>Esc</kbd> xóa lọc • <kbd>⌘K/Ctrl+K</kbd> mở Palette</span></div>
+    </div>
+
+    <div class="toolbar">
+      <div class="input-group">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79L20 21.5 21.5 20l-6-6zM10 14.5A4.5 4.5 0 1114.5 10 4.505 4.505 0 0110 14.5z"></path></svg>
+        <input id="q" type="search" placeholder="Tìm theo tên, tag, chủ đề…" autocomplete="off"/>
+      </div>
+
+      <div class="filters">
+        <div class="segments" role="tablist" aria-label="Chọn danh mục">
+          <button class="seg is-active" data-cat="">Tất cả</button>
+          <button class="seg" data-cat="gvcn">GVCN</button>
+          <button class="seg" data-cat="lop">Lớp</button>
+          <button class="seg" data-cat="khac">Khác</button>
+        </div>
+
+        <select id="sort">
+          <option value="title">Sắp xếp: A→Z</option>
+          <option value="-title">Sắp xếp: Z→A</option>
+          <option value="-updatedAt">Mới cập nhật</option>
+          <option value="updatedAt">Cũ trước</option>
+        </select>
+
+        <label class="switch"><input type="checkbox" id="onlyFavs"><span>Chỉ ⭐</span></label>
+      </div>
+
+      <div class="filters subfilters">
+        <div class="tabs" role="tablist" aria-label="Chọn khối" id="gradeTabs">
+          <button class="tab is-active" data-grade="">Tất cả khối</button>
+          <button class="tab" data-grade="10">Lớp 10</button>
+          <button class="tab" data-grade="11">Lớp 11</button>
+          <button class="tab" data-grade="12">Lớp 12</button>
+        </div>
+        <div class="segments small" role="tablist" aria-label="Chọn mạch kiến thức" id="trackSegs">
+          <button class="seg is-active" data-track="">Tất cả</button>
+          <button class="seg" data-track="dai-so">Đại số</button>
+          <button class="seg" data-track="hinh-hoc">Hình học</button>
+        </div>
+      </div>
+
+      <div class="filters utilbar">
+        <button id="playlistBtn" class="btn">📋 Playlist</button>
+        <button id="playStartBtn" class="btn ghost" title="Mở công cụ đầu tiên trong Playlist">▶️ Dạy</button>
+        <button id="playOpenAllBtn" class="btn ghost" title="Mở tất cả công cụ trong Playlist">↗️ Mở Playlist</button>
+        <button id="playClearBtn" class="btn ghost" title="Xóa Playlist">🗑️ Xóa</button>
+        <button id="brandBtn" class="btn ghost" title="Màu & logo thương hiệu">🎨 Thương hiệu</button>
+        <button id="voiceBtn" class="btn ghost" title="Tìm kiếm bằng giọng nói (thử Chrome)">🎤</button>
+        <button id="saveViewBtn" class="btn">💾 Lưu bộ lọc</button>
+        <select id="viewMenu" class="btn" title="Bộ lọc đã lưu"></select>
+        <button id="applyViewBtn" class="btn ghost" title="Áp dụng bộ lọc đã chọn">▶️ Áp dụng</button>
+        <button id="delViewBtn" class="btn ghost" title="Xóa bộ lọc đã chọn">🗑️</button>
+        <button id="openFavsBtn" class="btn" title="Mở tất cả ⭐ (tối đa 10)">↗️ Mở ⭐</button>
+        <button id="precacheBtn" class="btn ghost" title="Tải offline tất cả công cụ">📦 Offline</button>
+        <button id="resetBtn" class="btn ghost" title="Xóa nhanh mọi lọc">♻️ Reset</button>
+        <button id="shareBtn" class="btn">🔗 Chia sẻ</button>
+        <button id="randomBtn" class="btn">🎲 Ngẫu nhiên</button>
+        <button id="exportBtn" class="btn">⬇️ Xuất ⭐</button>
+        <label class="btn">
+          ⬆️ Nhập ⭐ <input type="file" id="importFile" accept="application/json" hidden>
+        </label>
+        <button id="printBtn" class="btn ghost">🖨️ In danh sách</button>
+        <button id="teacherBtn" class="btn ghost">👩‍🏫 Teacher</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section id="suggest" class="suggestions"></section>
+    <section id="stats" class="stats"></section>
+    <section id="chipbar" class="chipbar"></section>
+    <section id="recents" class="recents"></section>
+    <section id="list" class="grid"></section>
+  </main>
+
+  <footer class="shell footer">
+    <div class="cols">
+      <div>
+        <h4>Metadata khuyến nghị</h4>
+        <pre><code>&lt;meta name="tool-category" content="gvcn|lop|khac"&gt;
+&lt;meta name="tool-grade" content="10|11|12"&gt;
+&lt;meta name="tool-track" content="dai-so|hinh-hoc"&gt;
+&lt;meta name="tool-tags" content="...&gt;</code></pre>
+      </div>
+      <div>
+        <h4>Triển khai</h4>
+        <ol>
+          <li>Thêm file .html (đúng metadata)</li>
+          <li>Commit & push nhánh <code>main</code></li>
+          <li>Workflow Pages build manifest & deploy</li>
+        </ol>
+      </div>
+    </div>
+    <small>© 2025 Math Tools Hub • Ultra+</small>
+  </footer>
+
+  <script src="assets/app.js" defer></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+    let newWorker = null;
+      window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').then(reg => {
+        reg.onupdatefound = () => {
+          newWorker = reg.installing;
+          newWorker.onstatechange = () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              document.getElementById('updateToast').style.display = 'block';
+            }
+          };
+        };
+      });
+    });
+    }
+  </script>
+  <div id="updateToast" style="position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#111827;color:#fff;padding:10px 14px;border-radius:12px;display:none;box-shadow:0 6px 20px rgba(0,0,0,.3);z-index:9999">Có phiên bản mới. <button id="reloadBtn" class="btn" style="margin-left:8px;border-color:#374151;background:#2563eb;color:#fff">Tải lại</button></div>
+
+  <dialog id="qrDlg" class="palette">
+    <h3>QR Code</h3>
+    <div id="qrWrap" style="display:flex;justify-content:center;align-items:center;height:240px;border:1px dashed var(--border);border-radius:12px;margin:8px 0"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button id="qrCopyBtn" class="btn">Copy link</button>
+      <button id="qrPrintBtn" class="btn ghost">In QR</button>
+      <button id="qrCloseBtn" class="btn ghost">Đóng</button>
+    </div>
+  </dialog>
+
+  <dialog id="brandDlg" class="palette">
+    <h3>Tuỳ biến thương hiệu</h3>
+    <div style="display:grid;gap:10px">
+      <label>Màu thương hiệu: <input type="color" id="brandColor" value="#2563eb"></label>
+      <label>Logo URL (SVG/PNG): <input type="url" id="logoUrl" placeholder="https://..."></label>
+      <small>Gợi ý: dùng logo trường; để trống để dùng mặc định.</small>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px">
+      <button id="brandSave" class="btn">Lưu</button>
+      <button id="brandReset" class="btn ghost">Đặt lại</button>
+      <button id="brandClose" class="btn ghost">Đóng</button>
+    </div>
+  </dialog>
+
+  <dialog id="playlistDlg" class="palette">
+    <h3>Playlist bài dạy</h3>
+    <div id="playlistList" style="max-height:300px;overflow:auto"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px">
+      <button id="playUpBtn" class="btn">⬆️ Lên</button>
+      <button id="playDownBtn" class="btn">⬇️ Xuống</button>
+      <button id="playRemoveBtn" class="btn ghost">🗑️ Xoá mục</button>
+      <button id="playCloseBtn" class="btn ghost">Đóng</button>
+    </div>
+  </dialog>
+
+  <dialog id="webDlg" class="palette">
+    <h3>Xem nhanh</h3>
+    <iframe id="webFrame" style="width:100%;height:70vh;border:1px solid var(--border);border-radius:12px" src="about:blank"></iframe>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px">
+      <a id="webOpenNew" class="btn" href="#" target="_blank" rel="noopener">↗️ Mở tab mới</a>
+      <button id="webClose" class="btn ghost">Đóng</button>
+    </div>
+  </dialog>
+</body>
+</html>

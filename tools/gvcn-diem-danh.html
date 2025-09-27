@@ -1,0 +1,22 @@
+<!DOCTYPE html><html lang="vi"><head>
+<meta charset="utf-8"/>
+<title>GVCN — Điểm danh nhanh</title>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="tool-category" content="gvcn">
+<meta name="tool-tags" content="gvcn, diem-danh, quan-ly-lop">
+</head><body>
+<h1>Điểm danh nhanh</h1>
+<textarea id="names" rows="6" cols="40">An
+Bình
+Chi
+Dung</textarea><br/>
+<button onclick="make()">Tạo bảng</button>
+<div id="area"></div>
+<script>
+function make(){
+  const names = document.getElementById('names').value.split(/\n+/).map(s=>s.trim()).filter(Boolean);
+  const rows = names.map(n=>`<tr><td>${n}</td><td><input type="checkbox"></td><td><input placeholder="Ghi chú"></td></tr>`).join('');
+  document.getElementById('area').innerHTML = `<table border="1" cellspacing="0" cellpadding="6"><tr><th>Họ tên</th><th>Có mặt</th><th>Ghi chú</th></tr>${rows}</table>`;
+}
+</script>
+</body></html>

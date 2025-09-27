@@ -1,0 +1,23 @@
+<!DOCTYPE html><html lang="vi"><head>
+<meta charset="utf-8"/>
+<title>Công cụ khác — Đổi đơn vị độ dài</title>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="tool-category" content="khac">
+<meta name="tool-tags" content="chuyen-doi, don-vi, cong-cu-khac">
+</head><body>
+<h1>Đổi đơn vị độ dài</h1>
+<input id="val" type="number" step="any" value="1">
+<select id="from"><option>m</option><option>cm</option><option>mm</option><option>km</option></select>
+→
+<select id="to"><option>m</option><option>cm</option><option>mm</option><option>km</option></select>
+<button onclick="conv()">Đổi</button>
+<pre id="out"></pre>
+<script>
+const map = { m:1, cm:0.01, mm:0.001, km:1000 };
+function conv(){
+  const v=+val.value, f=from.value, t=to.value;
+  const m=v*map[f]; const res=m/map[t];
+  out.textContent=`${v} ${f} = ${res} ${t}`;
+}
+</script>
+</body></html>

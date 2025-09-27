@@ -1,0 +1,150 @@
+[
+  {
+    "title": "GVCN — Điểm danh nhanh",
+    "path": "tools/gvcn-diem-danh.html",
+    "category": "gvcn",
+    "grade": "",
+    "track": "",
+    "tags": [
+      "gvcn",
+      "diem-danh",
+      "quan-ly-lop"
+    ],
+    "updatedAt": "2025-09-27T00:00:00",
+    "external": false,
+    "extra": {
+      "headings": [],
+      "keywords": []
+    }
+  },
+  {
+    "title": "Công cụ khác — Đổi đơn vị độ dài",
+    "path": "tools/cong-cu-khac-doi-don-vi.html",
+    "category": "khac",
+    "grade": "",
+    "track": "",
+    "tags": [
+      "chuyen-doi",
+      "don-vi",
+      "cong-cu-khac"
+    ],
+    "updatedAt": "2025-09-27T00:00:00",
+    "external": false,
+    "extra": {
+      "headings": [],
+      "keywords": []
+    }
+  },
+  {
+    "title": "Khác — GeoGebra",
+    "path": "https://www.geogebra.org/",
+    "category": "khac",
+    "grade": "",
+    "track": "",
+    "tags": [
+      "geogebra",
+      "hinh-hoc",
+      "khac"
+    ],
+    "updatedAt": "2025-09-27T00:00:00",
+    "external": true,
+    "extra": {
+      "headings": [],
+      "keywords": []
+    }
+  },
+  {
+    "title": "Khác — Wolfram|Alpha",
+    "path": "https://www.wolframalpha.com/",
+    "category": "khac",
+    "grade": "",
+    "track": "",
+    "tags": [
+      "wolfram",
+      "dai-so",
+      "khac"
+    ],
+    "updatedAt": "2025-09-27T00:00:00",
+    "external": true,
+    "extra": {
+      "headings": [],
+      "keywords": []
+    }
+  },
+  {
+    "title": "Lớp 10 — Hình học — Góc giữa hai vectơ",
+    "path": "tools/10/hinhhoc-goc-vector.html",
+    "category": "lop",
+    "grade": "10",
+    "track": "hinh-hoc",
+    "tags": [
+      "hinh-hoc",
+      "vector",
+      "goc",
+      "tich-vo-huong"
+    ],
+    "updatedAt": "2025-09-27T00:00:00",
+    "external": false,
+    "extra": {
+      "headings": [],
+      "keywords": []
+    }
+  },
+  {
+    "title": "Lớp 10 — Đại số — Phương trình bậc hai",
+    "path": "tools/10/daiso-pt-bac2.html",
+    "category": "lop",
+    "grade": "10",
+    "track": "dai-so",
+    "tags": [
+      "dai-so",
+      "bac-2",
+      "nghiem",
+      "delta"
+    ],
+    "updatedAt": "2025-09-27T00:00:00",
+    "external": false,
+    "extra": {
+      "headings": [],
+      "keywords": []
+    }
+  },
+  {
+    "title": "Lớp 11 — Đại số — Giới hạn sin(x)/x",
+    "path": "tools/11/daiso-gioi-han.html",
+    "category": "lop",
+    "grade": "11",
+    "track": "dai-so",
+    "tags": [
+      "gioi-han",
+      "giai-tich",
+      "sinx-x",
+      "lop-11"
+    ],
+    "updatedAt": "2025-09-27T00:00:00",
+    "external": false,
+    "extra": {
+      "headings": [],
+      "keywords": []
+    }
+  },
+  {
+    "title": "Lớp 12 — Hình học — Khoảng cách điểm-đường thẳng",
+    "path": "tools/12/hinhhoc-tt-pt.html",
+    "category": "lop",
+    "grade": "12",
+    "track": "hinh-hoc",
+    "tags": [
+      "hinh-hoc",
+      "toa-do",
+      "khoang-cach",
+      "lop-12"
+    ],
+    "updatedAt": "2025-09-27T00:00:00",
+    "external": false,
+    "extra": {
+      "headings": [],
+      "keywords": []
+    }
+  }
+]

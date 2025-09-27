@@ -1,0 +1,20 @@
+<!DOCTYPE html><html lang="vi"><head>
+<meta charset="utf-8"/>
+<title>Lớp 10 — Đại số — Phương trình bậc hai</title>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="tool-category" content="lop">
+<meta name="tool-grade" content="10">
+<meta name="tool-track" content="dai-so">
+<meta name="tool-tags" content="dai-so, bac-2, nghiem, delta">
+</head><body>
+<h1>Phương trình bậc hai</h1>
+<label>a <input id="a" type="number" step="any" value="1"></label>
+<label>b <input id="b" type="number" step="any" value="0"></label>
+<label>c <input id="c" type="number" step="any" value="0"></label>
+<button onclick="solve()">Giải</button>
+<pre id="out"></pre>
+<script>
+const aEl=a,bEl=b,cEl=c,out=document.getElementById('out');
+function solve(){const a=+aEl.value,b=+bEl.value,c=+cEl.value; if(a===0){out.textContent='a=0 → không phải PT bậc 2';return;} const d=b*b-4*a*c; out.textContent = d<0?'Vô nghiệm thực': d===0?`Nghiệm kép x=${(-b)/(2*a)}`:`x1=${(-b+Math.sqrt(d))/(2*a)}, x2=${(-b-Math.sqrt(d))/(2*a)}`;}
+</script>
+</body></html>

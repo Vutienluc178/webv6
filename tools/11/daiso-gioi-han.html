@@ -1,0 +1,16 @@
+<!DOCTYPE html><html lang="vi"><head>
+<meta charset="utf-8"/>
+<title>Lớp 11 — Đại số — Giới hạn sin(x)/x</title>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="tool-category" content="lop">
+<meta name="tool-grade" content="11">
+<meta name="tool-track" content="dai-so">
+<meta name="tool-tags" content="gioi-han, giai-tich, sinx-x, lop-11">
+</head><body>
+<h1>Giới hạn sin(x)/x khi x→0</h1>
+<input id="x" type="number" step="0.001" value="0.1"><button onclick="calc()">Tính</button>
+<pre id="out"></pre>
+<script>
+function calc(){const x=+document.getElementById('x').value; const fx=(Math.abs(x)<1e-12)?1:Math.sin(x)/x; document.getElementById('out').textContent=`x=${x}\nf(x)≈${fx}`;}
+</script>
+</body></html>

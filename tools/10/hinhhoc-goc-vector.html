@@ -1,0 +1,19 @@
+<!DOCTYPE html><html lang="vi"><head>
+<meta charset="utf-8"/>
+<title>Lớp 10 — Hình học — Góc giữa hai vectơ</title>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="tool-category" content="lop">
+<meta name="tool-grade" content="10">
+<meta name="tool-track" content="hinh-hoc">
+<meta name="tool-tags" content="hinh-hoc, vector, goc, tich-vo-huong">
+</head><body>
+<h1>Góc giữa hai vectơ R²</h1>
+<label>u=(<input id="ux" type="number" value="1">,<input id="uy" type="number" value="0">)</label>
+<label>v=(<input id="vx" type="number" value="0">,<input id="vy" type="number" value="1">)</label>
+<button onclick="calc()">Tính</button>
+<pre id="out"></pre>
+<script>
+function calc(){const ux=+uxEl.value,uy=+uyEl.value,vx=+vxEl.value,vy=+vyEl.value;const dot=ux*vx+uy*vy;const nu=Math.hypot(ux,uy),nv=Math.hypot(vx,vy);if(!nu||!nv){out.textContent='Vectơ phải khác 0';return;}let c=dot/(nu*nv);c=Math.max(-1,Math.min(1,c));const ang=Math.acos(c)*180/Math.PI;out.textContent=`∠(u,v)≈${ang.toFixed(2)}°`;}
+const uxEl=ux,uyEl=uy,vxEl=vx,vyEl=vy,out=document.getElementById('out');
+</script>
+</body></html>
