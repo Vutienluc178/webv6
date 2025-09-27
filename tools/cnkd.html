@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+  <!-- 🔖 Metadata để trang chủ tự quét & phân loại -->
+  <title>GVCN — Vòng Quay Kì Diệu (Chọn học sinh ngẫu nhiên)</title>
+  <meta name="tool-category" content="gvcn">
+  <meta name="tool-tags" content="gvcn, quay-so, ngau-nhien, chia-nhom, vong-quay, lop-hoc">
+
+  <!-- (Tuỳ chọn, giúp tìm kiếm tốt hơn) -->
+  <meta name="keywords" content="GVCN, quay số, chia nhóm, chọn học sinh, random, classroom">
+
+  <!-- Phần còn lại giữ nguyên chức năng -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    body{font-family:'Inter',sans-serif;background:#f9fafb;color:#1f2937}
+    .control-panel{background:#fff;border:1px solid #e5e7eb;border-radius:.75rem;padding:1.5rem}
+    #canvas-wrapper{position:relative;aspect-ratio:1/1;max-width:700px;margin:auto}
+    canvas{display:block;width:100%;height:100%;position:absolute;top:0;left:0}
+    #confettiCanvas{pointer-events:none}
+    #names-input{background:#f3f4f6;border:1px solid #d1d5db;border-radius:.5rem;resize:vertical;min-height:120px}
+    .action-btn,.icon-btn{color:#fff;font-weight:700;border-radius:.5rem;transition:background-color .2s;cursor:pointer}
+    .action-btn{padding:.75rem 1.5rem;text-transform:uppercase}
+    .icon-btn{padding:.5rem;display:flex;align-items:center;justify-content:center}
+    .action-btn:disabled{background:#9ca3af;cursor:not-allowed}
+    #spin-btn{background:#16a34a} #spin-btn:hover:not(:disabled){background:#15803d}
+    #reset-btn{background:#d97706} #reset-btn:hover{background:#b45309}
+    #result-display{background:#4f46e5;color:#fff;font-size:1rem;text-align:left;padding:1.5rem;border-radius:.75rem;margin-top:1rem;transition:transform .3s ease-out;transform:scale(0)}
+    #result-display.visible{transform:scale(1)}
+    .settings-label{cursor:pointer;user-select:none}
+    select{
+      background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+      background-position:right .5rem center;background-repeat:no-repeat;background-size:1.5em 1.5em;padding-right:2.5rem;
+      -webkit-print-color-adjust:exact;print-color-adjust:exact
+    }
+  </style>
+</head>
+<body class="p-4 sm:p-6 md:p-8">
+
+  <header class="text-center mb-6">
+    <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800">Vòng Quay Kì Diệu</h1>
+    <p class="text-lg text-gray-500 mt-2">Vũ Tiến Lực - Trường THPT Nguyễn Hữu Cảnh</p>
+  </header>
+
+  <main class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+    <!-- Cột Trái: Canvas -->
+    <div class="relative w-full">
+      <div id="canvas-wrapper">
+        <canvas id="wheelCanvas"></canvas>
+        <canvas id="confettiCanvas"></canvas>
+      </div>
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[150%] z-10">
+        <svg width="60" height="80" viewBox="0 0 60 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="drop-shadow-lg">
+          <path d="M30 80C30 80 60 48.9509 60 30C60 13.4315 46.5685 0 30 0C13.4315 0 0 13.4315 0 30C0 48.9509 30 80 30 80Z" fill="#ef4444"/>
+          <circle cx="30" cy="30" r="12" fill="white"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Cột Phải: Bảng điều khiển -->
+    <div class="control-panel flex flex-col space-y-4">
+      <!-- Quản lý danh sách lớp -->
+      <div>
+        <label for="class-list-select" class="font-bold text-lg mb-2 block">Quản lý lớp học:</label>
+        <div class="flex items-center gap-2">
+          <select id="class-list-select" class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"></select>
+          <button id="save-list-btn" title="Lưu danh sách mới" class="icon-btn bg-blue-500 hover:bg-blue-600">
+            <!-- icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+          </button>
+          <button id="delete-list-btn" title="Xóa danh sách này" class="icon-btn bg-red-600 hover:bg-red-700">
+            <!-- icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+          </button>
+        </div>
+      </div>
+
+      <div>
+        <label for="names-input" class="font-bold text-lg mb-2 block">Danh sách tên (mỗi tên một dòng):</label>
+        <textarea id="names-input" class="w-full p-2"></textarea>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <button id="spin-btn" class="action-btn">Quay!</button>
+        <button id="reset-btn" class="action-btn">Làm mới DS</button>
+      </div>
+
+      <!-- Chia nhóm -->
+      <div class="border-t border-gray-200 pt-4">
+        <h4 class="font-bold text-lg mb-2 text-center">Hoặc chia nhóm ngẫu nhiên</h4>
+        <div class="grid grid-cols-3 gap-2">
+          <button id="group-4-btn" class="action-btn bg-blue-500 hover:bg-blue-600">Nhóm 4</button>
+          <button id="group-6-btn" class="action-btn bg-purple-500 hover:bg-purple-600">Nhóm 6</button>
+          <button id="group-8-btn" class="action-btn bg-pink-500 hover:bg-pink-600">Nhóm 8</button>
+        </div>
+      </div>
+
+      <!-- Cài đặt -->
+      <div class="border-t border-gray-200 pt-4 space-y-3">
+        <div class="flex items-center gap-2">
+          <input type="checkbox" id="remove-winner-checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
+          <label for="remove-winner-checkbox" class="font-medium settings-label">Xóa tên người thắng cuộc (khi quay)</label>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" id="prize-mode-checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
+          <label for="prize-mode-checkbox" class="font-medium settings-label">Bật ô phần thưởng đặc biệt ★</label>
+        </div>
+        <div class="flex items-center gap-2">
+          <label for="spin-mode-select" class="font-medium">Chế độ quay:</label>
+          <select id="spin-mode-select" class="w-full rounded-md border-gray-300 shadow-sm"></select>
+        </div>
+        <div class="flex items-center gap-2">
+          <label for="sound-mode-select" class="font-medium">Chế độ âm thanh:</label>
+          <select id="sound-mode-select" class="w-full rounded-md border-gray-300 shadow-sm"></select>
+        </div>
+      </div>
+
+      <div id="result-display"></div>
+
+      <!-- Lịch sử -->
+      <div id="history-container" class="border-t border-gray-200 pt-4">
+        <h4 class="font-bold text-lg mb-2 text-center">Lịch sử quay gần đây</h4>
+        <ul id="history-list" class="text-center text-gray-500 space-y-1"></ul>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // --- DOM Elements ---
+    const ui = {
+      wheelCanvas: document.getElementById('wheelCanvas'),
+      confettiCanvas: document.getElementById('confettiCanvas'),
+      namesInput: document.getElementById('names-input'),
+      spinBtn: document.getElementById('spin-btn'),
+      resetBtn: document.getElementById('reset-btn'),
+      resultDisplay: document.getElementById('result-display'),
+      removeWinnerCheckbox: document.getElementById('remove-winner-checkbox'),
+      soundModeSelect: document.getElementById('sound-mode-select'),
+      spinModeSelect: document.getElementById('spin-mode-select'),
+      prizeModeCheckbox: document.getElementById('prize-mode-checkbox'),
+      classListSelect: document.getElementById('class-list-select'),
+      saveListBtn: document.getElementById('save-list-btn'),
+      deleteListBtn: document.getElementById('delete-list-btn'),
+      historyContainer: document.getElementById('history-container'),
+      historyList: document.getElementById('history-list'),
+    };
+    const wheelCtx = ui.wheelCanvas.getContext('2d');
+    const confettiCtx = ui.confettiCanvas.getContext('2d');
+
+    // --- State ---
+    let state = {
+      names: [], colors: [], rotation: 0, spinSpeed: 0, isSpinning: false,
+      lastTickAngle: 0, removeWinner: false, soundMode: 'default', spinMode: 'classic',
+      prizeMode: false, prizeName: null, confetti: [], history: [],
+      isSuspenseAnimating: false, suspenseStartTime: 0, suspenseDuration: 2500,
+      startRotation: 0, targetRotation: 0,
+      classLists: {}, currentClass: 'Danh sách mặc định',
+    };
+
+    // --- Constants ---
+    const baseColors = ["#ef4444","#f97316","#f59e0b","#eab308","#84cc16","#22c55e","#10b981","#14b8a6","#06b6d4","#0ea5e9","#3b82f6","#6366f1","#8b5cf6","#a855f7","#d946ef","#ec4899","#f43f5e"];
+    const prizeColor = "#facc15"; // Gold
+
+    // --- Audio ---
+    let audioCtx;
+    const soundNotes = {
+      marioCoin:[1046.50], mario1Up:[659.25,783.99,1318.51,1046.50,1396.91,1567.98],
+      journeyTick:[330,220], journeyWin:[523.25,659.25,783.99,880.00,1046.50],
+      defaultWin:[261.63,329.63,392.00], arcadeTicks:[1244.51,1396.91,1567.98,1760.00],
+      arcadeWin:[523.25,659.25,783.99,1046.50], musicalTicks:[523.25,587.33,659.25,783.99,880.00],
+      musicalWin:[523.25,659.25,783.99,1046.50], prizeWin:[523.25,659.25,783.99,1046.50,783.99,1046.50,1318.51]
+    };
+    function initAudio(){ if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)(); }
+    function playSound(notes,duration=0.1,type='sine'){
+      if(!audioCtx||state.soundMode==='mute')return;
+      const now=audioCtx.currentTime;
+      notes.forEach((note,i)=>{const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);o.type=type;o.frequency.value=note;g.gain.setValueAtTime(0.5,now+i*duration);g.gain.exponentialRampToValueAtTime(0.001,now+(i+1)*duration);o.start(now+i*duration);o.stop(now+(i+1)*duration);});
+    }
+
+    function getNames(){ return ui.namesInput.value.split('\n').map(s=>s.trim()).filter(Boolean); }
+    function generateColors(count){ return Array.from({length:count},(_,i)=>baseColors[i%baseColors.length]); }
+
+    // --- Drawing ---
+    function setupCanvases(){
+      const dpr=window.devicePixelRatio||1;
+      const rect=ui.wheelCanvas.parentElement.getBoundingClientRect();
+      [ui.wheelCanvas,ui.confettiCanvas].forEach(c=>{c.width=rect.width*dpr;c.height=rect.height*dpr;c.getContext('2d').scale(dpr,dpr);});
+      drawWheel();
+    }
+    function drawWheel(){
+      state.names=getNames();
+      const {names,rotation,prizeMode,prizeName}=state;
+      wheelCtx.clearRect(0,0,ui.wheelCanvas.clientWidth,ui.wheelCanvas.clientHeight);
+      if(names.length===0) return;
+      state.colors=generateColors(names.length);
+      const arc=(2*Math.PI)/names.length;
+      const cx=ui.wheelCanvas.clientWidth/2, cy=ui.wheelCanvas.clientHeight/2;
+      const r=Math.min(cx,cy)*0.9;
+      wheelCtx.save(); wheelCtx.translate(cx,cy); wheelCtx.rotate(rotation);
+      for(let i=0;i<names.length;i++){
+        const isPrize=prizeMode&&names[i]===prizeName;
+        wheelCtx.beginPath(); wheelCtx.moveTo(0,0); wheelCtx.arc(0,0,r,i*arc,(i+1)*arc); wheelCtx.closePath();
+        wheelCtx.fillStyle=isPrize?prizeColor:state.colors[i]; wheelCtx.fill();
+        wheelCtx.save(); wheelCtx.rotate(i*arc+arc/2);
+        wheelCtx.fillStyle=isPrize?"#1f2937":"white"; wheelCtx.font=`bold ${Math.min(18,r/10)}px 'Inter'`;
+        wheelCtx.textAlign="center"; wheelCtx.textBaseline="middle"; wheelCtx.shadowColor="rgba(0,0,0,.3)"; wheelCtx.shadowBlur=3;
+        const text=isPrize?`★ ${names[i]} ★`:names[i]; wheelCtx.fillText(text,r*0.6,0); wheelCtx.restore();
+      }
+      wheelCtx.restore();
+    }
+
+    // --- Confetti ---
+    function triggerConfetti(){
+      state.confetti=[];
+      for(let i=0;i<150;i++){
+        state.confetti.push({x:ui.wheelCanvas.clientWidth/2,y:ui.wheelCanvas.clientHeight/2,vx:(Math.random()-0.5)*10,vy:(Math.random()-0.5)*10-5,radius:Math.random()*4+2,color:baseColors[Math.floor(Math.random()*baseColors.length)],alpha:1});
+      }
+    }
+    function updateAndDrawConfetti(){
+      confettiCtx.clearRect(0,0,ui.confettiCanvas.clientWidth,ui.confettiCanvas.clientHeight);
+      state.confetti.forEach((p,i)=>{p.vy+=0.2;p.x+=p.vx;p.y+=p.vy;p.alpha-=0.01;if(p.alpha<=0)state.confetti.splice(i,1);confettiCtx.globalAlpha=p.alpha;confettiCtx.fillStyle=p.color;confettiCtx.beginPath();confettiCtx.arc(p.x,p.y,p.radius,0,Math.PI*2);confettiCtx.fill();}); confettiCtx.globalAlpha=1;
+    }
+
+    // --- Spinning ---
+    function spin(){
+      if(state.isSpinning||state.names.length<2) return;
+      initAudio(); state.isSpinning=true; state.isSuspenseAnimating=false; ui.spinBtn.disabled=true;
+      ui.resultDisplay.classList.remove('visible');
+      state.spinSpeed=Math.random()*0.4+0.4;
+      if(state.prizeMode) pickPrizeName();
+    }
+    function getWinner(){
+      const total=2*Math.PI, pointer=(total*3/4);
+      const eff=state.rotation%total;
+      let final=(pointer-eff+total)%total;
+      return state.names[Math.floor(final/(total/state.names.length))];
+    }
+    function onSpinEnd(){
+      state.isSpinning=false; state.isSuspenseAnimating=false; ui.spinBtn.disabled=false;
+      const winner=getWinner(); if(!winner) return;
+      const isPrize=state.prizeMode&&winner===state.prizeName;
+      let html=`<span style="font-size:2rem;display:block;text-align:center;">`; if(isPrize) html+=`🎁 PHẦN THƯỞNG! 🎁<br/>`; html+=`🎉 ${winner} 🎉</span>`;
+      ui.resultDisplay.innerHTML=html; ui.resultDisplay.classList.add('visible');
+      triggerConfetti();
+      playSound(isPrize?soundNotes.prizeWin:(soundNotes[`${state.soundMode}Win`]||soundNotes.defaultWin),0.08);
+      updateHistory(winner);
+      if(state.removeWinner){
+        const current=getNames().filter(n=>n!==winner);
+        ui.namesInput.value=current.join('\n'); handleInput(true);
+      }
+    }
+    const easeOutCubic=t=>1-Math.pow(1-t,3);
+    function triggerSuspenseAnimation(){
+      state.isSuspenseAnimating=true; state.suspenseStartTime=performance.now(); state.startRotation=state.rotation;
+      const arc=(2*Math.PI)/(state.names.length||1), overshoot=arc*(1+Math.random()*1.5);
+      state.targetRotation=state.rotation+overshoot;
+    }
+    function animate(){
+      if(state.isSuspenseAnimating){
+        const prog=Math.min((performance.now()-state.suspenseStartTime)/state.suspenseDuration,1);
+        state.rotation=state.startRotation+(state.targetRotation-state.startRotation)*easeOutCubic(prog);
+        if(prog>=1) onSpinEnd();
+      } else if(state.isSpinning){
+        state.rotation+=state.spinSpeed; state.spinSpeed*=0.992;
+        const arc=(2*Math.PI)/(state.names.length||1), cur=Math.floor(state.rotation/arc);
+        if(cur!==state.lastTickAngle){
+          const rnd=notes=>[notes[Math.floor(Math.random()*notes.length)]];
+          const map={mario:soundNotes.marioCoin,journey:soundNotes.journeyTick,arcade:rnd(soundNotes.arcadeTicks),musical:rnd(soundNotes.musicalTicks)};
+          const type={journey:'square',arcade:'square'};
+          if(map[state.soundMode]) playSound(map[state.soundMode],0.05,type[state.soundMode]||'sine');
+          else if(state.soundMode==='default'&&audioCtx) playTickSound(state.spinSpeed);
+          state.lastTickAngle=cur;
+        }
+        if(state.spinSpeed<0.005&&state.spinMode==='suspense'){ state.isSpinning=false; triggerSuspenseAnimation(); }
+        else if(state.spinSpeed<0.001) onSpinEnd();
+      }
+      drawWheel();
+      if(state.confetti.length>0) updateAndDrawConfetti();
+      requestAnimationFrame(animate);
+    }
+
+    // --- Grouping ---
+    function createGroups(size){
+      initAudio(); const names=getNames();
+      if(names.length<size){ ui.resultDisplay.innerHTML=`<span style="font-size:1.25rem;display:block;text-align:center;">Không đủ học sinh để chia nhóm ${size}.</span>`; ui.resultDisplay.classList.add('visible'); return; }
+      const shuffled=Array.from({length:names.length},(_,i)=>i).sort(()=>Math.random()-0.5).map(i=>names[i]);
+      const groups=Array.from({length:Math.ceil(names.length/size)},(_,i)=>shuffled.slice(i*size,i*size+size));
+      let html=`<h3 class="text-xl font-bold mb-4 text-center">Kết quả chia nhóm (${size} người)</h3><div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-base">`;
+      groups.forEach((g,i)=>{ html+=`<div class="bg-white/10 p-3 rounded-lg"><h4 class="font-bold text-white mb-2 border-b border-white/20 pb-1">Nhóm ${i+1}</h4><ul class="list-disc list-inside">${g.map(m=>`<li>${m}</li>`).join('')}</ul></div>`; });
+      ui.resultDisplay.innerHTML=html+'</div>'; ui.resultDisplay.classList.add('visible');
+      playSound(soundNotes[`${state.soundMode}Win`]||soundNotes.defaultWin,0.08); triggerConfetti();
+    }
+
+    // --- Data/State ---
+    function handleInput(silent=false){
+      if(!silent) reset();
+      const names=ui.namesInput.value;
+      if(state.classLists[state.currentClass]) state.classLists[state.currentClass]=names;
+      saveClassLists();
+    }
+    function reset(){
+      state.isSpinning=false; state.isSuspenseAnimating=false; ui.spinBtn.disabled=false;
+      ui.resultDisplay.classList.remove('visible'); state.rotation=0; state.spinSpeed=0; drawWheel();
+    }
+    function pickPrizeName(){ state.prizeName = state.names.length>0 ? state.names[Math.floor(Math.random()*state.names.length)] : null; }
+    function updateHistory(winner){
+      state.history.unshift(winner); if(state.history.length>5) state.history.pop();
+      localStorage.setItem('spinHistory',JSON.stringify(state.history)); renderHistory();
+    }
+    function renderHistory(){
+      if(state.history.length>0){ ui.historyContainer.classList.remove('hidden'); ui.historyList.innerHTML=state.history.map(n=>`<li>${n}</li>`).join(''); }
+      else ui.historyContainer.classList.add('hidden');
+    }
+    function saveClassLists(){ localStorage.setItem('studentClassLists',JSON.stringify(state.classLists)); }
+    function populateClassSelect(){
+      ui.classListSelect.innerHTML='';
+      Object.keys(state.classLists).forEach(name=>{ const o=document.createElement('option'); o.value=name; o.textContent=name; ui.classListSelect.appendChild(o); });
+      ui.classListSelect.value=state.currentClass;
+    }
+
+    // --- Events ---
+    ui.namesInput.addEventListener('input',()=>handleInput(true));
+    ui.namesInput.addEventListener('change',()=>handleInput(false));
+    ui.spinBtn.addEventListener('click',spin);
+    ui.resetBtn.addEventListener('click',()=>{ ui.namesInput.value=''; handleInput(false); });
+    ['group-4-btn','group-6-btn','group-8-btn'].forEach(id=>{
+      document.getElementById(id).addEventListener('click',()=>createGroups(parseInt(id.split('-')[1])));
+    });
+    ui.removeWinnerCheckbox.addEventListener('change',e=>{ state.removeWinner=e.target.checked; localStorage.setItem('removeWinner',state.removeWinner); });
+    ui.prizeModeCheckbox.addEventListener('change',e=>{ state.prizeMode=e.target.checked; localStorage.setItem('prizeMode',state.prizeMode); drawWheel(); });
+    ui.soundModeSelect.addEventListener('change',e=>{ state.soundMode=e.target.value; localStorage.setItem('soundMode',state.soundMode); });
+    ui.spinModeSelect.addEventListener('change',e=>{ state.spinMode=e.target.value; localStorage.setItem('spinMode',state.spinMode); });
+
+    ui.saveListBtn.addEventListener('click',()=>{
+      const name=prompt('Nhập tên danh sách mới:','Lớp 12A1');
+      if(name && !state.classLists[name]){
+        state.classLists[name]=ui.namesInput.value; state.currentClass=name;
+        localStorage.setItem('currentClassName',state.currentClass); saveClassLists(); populateClassSelect();
+      } else if(name){ alert('Tên danh sách này đã tồn tại!'); }
+    });
+    ui.deleteListBtn.addEventListener('click',()=>{
+      if(Object.keys(state.classLists).length<=1){ alert('Không thể xóa danh sách cuối cùng.'); return; }
+      if(confirm(`Bạn có chắc chắn muốn xóa danh sách "${state.currentClass}" không?`)){
+        delete state.classLists[state.currentClass];
+        state.currentClass=Object.keys(state.classLists)[0];
+        localStorage.setItem('currentClassName',state.currentClass);
+        ui.namesInput.value=state.classLists[state.currentClass];
+        saveClassLists(); populateClassSelect(); handleInput();
+      }
+    });
+    ui.classListSelect.addEventListener('change',e=>{
+      state.currentClass=e.target.value; localStorage.setItem('currentClassName',state.currentClass);
+      ui.namesInput.value=state.classLists[state.currentClass]; handleInput();
+    });
+
+    // --- Init ---
+    window.addEventListener('resize',setupCanvases);
+    document.addEventListener('DOMContentLoaded',()=>{
+      // Load lists
+      let saved=null; try{ saved=JSON.parse(localStorage.getItem('studentClassLists')); }catch{}
+      state.classLists = (saved && typeof saved==='object' && Object.keys(saved).length>0) ? saved :
+                         {'Danh sách mặc định':"An\nBình\nCường\nDũng\nEm\nGiang\nHương"};
+      state.currentClass = localStorage.getItem('currentClassName') || Object.keys(state.classLists)[0];
+      if(!state.classLists[state.currentClass]) state.currentClass=Object.keys(state.classLists)[0];
+
+      // History
+      let hist=null; try{ hist=JSON.parse(localStorage.getItem('spinHistory')); }catch{}
+      state.history = Array.isArray(hist)?hist:[];
+      // Settings
+      state.removeWinner = localStorage.getItem('removeWinner')==='true';
+      state.prizeMode   = localStorage.getItem('prizeMode')==='true';
+      state.soundMode   = localStorage.getItem('soundMode')||'default';
+      state.spinMode    = localStorage.getItem('spinMode')||'classic';
+
+      populateClassSelect();
+      ui.namesInput.value = state.classLists[state.currentClass] || '';
+      ui.removeWinnerCheckbox.checked = state.removeWinner;
+      ui.prizeModeCheckbox.checked   = state.prizeMode;
+      ui.soundModeSelect.innerHTML = `<option value="default">Mặc định</option><option value="mario">Mario</option><option value="journey">Tây Du Ký</option><option value="arcade">Arcade</option><option value="musical">Nhạc Cụ</option><option value="mute">Tắt tiếng</option>`;
+      ui.soundModeSelect.value = state.soundMode;
+      ui.spinModeSelect.innerHTML = `<option value="classic">Cổ điển</option><option value="suspense">Hồi hộp</option>`;
+      ui.spinModeSelect.value = state.spinMode;
+      renderHistory();
+
+      setupCanvases();
+      animate();
+    });
+
+    function playTickSound(speed){
+      if(!audioCtx||state.soundMode!=='default') return;
+      const o=audioCtx.createOscillator(), g=audioCtx.createGain();
+      o.connect(g); g.connect(audioCtx.destination);
+      o.type='sine'; o.frequency.value=500+speed*1500;
+      g.gain.setValueAtTime(0.5,audioCtx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.1);
+      o.start(audioCtx.currentTime); o.stop(audioCtx.currentTime+0.1);
+    }
+  </script>
+</body>
+</html>
